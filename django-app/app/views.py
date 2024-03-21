@@ -20,6 +20,7 @@ import logging
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from rest_framework.generics import ListAPIView
+import datetime
 
 
 logger = logging.getLogger(__name__)
@@ -203,6 +204,11 @@ class EmployeeDailyOrdersView(ListAPIView):
 def get_restaurants_for_day(request):
     # Extract the date from the request
     day = request.query_params.get('day', None)
+    # 
+    # active_days = 2024-03-12
+    # str -> pythons date 
+    # pythons date -> day of the week -> int: 1-7
+    # filter (1-7)
 
     if day is not None:
         # Filters restaurants by specific day

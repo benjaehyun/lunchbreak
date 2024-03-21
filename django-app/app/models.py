@@ -75,6 +75,8 @@ class MenuItem(models.Model):
 class Option(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, related_name='options')
     name = models.CharField(max_length=100)
+    is_required = models.BooleanField(default=False)
+    allow_multiple = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.restaurant.name} - {self.name}"

@@ -21,11 +21,12 @@ export default function RestaurantIndexComponent({ selectedDay }) {
         // setRestaurants([]);
         // return;
         request(api.get, `/restaurants/day/${encodeURIComponent(selectedDay)}`);
+        console.log(`restaurants: ${restaurants}`);
       }
     };
     fetchRestaurantByDay();
-    console.log(`restaurant: ${restaurants}`);
   }, [selectedDay, request]);
+
 
   if (!selectedDay) {
     return <div>Please select a day to see available restaurants</div>;
@@ -39,7 +40,7 @@ export default function RestaurantIndexComponent({ selectedDay }) {
         <h2>Restaurants</h2>
         {restaurants?.length > 0 ? (
           <ul>
-            {restaurants?.map((restaurant) => (
+            {restaurants.map((restaurant) => (
               <li key={restaurant.id}>
                 <Link to={`/restaurants/${restaurant.id}`}>
                   {restaurant.name}
