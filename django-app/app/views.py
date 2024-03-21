@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from .serializers import RestaurantSerializer, FoodSerializer, GroupSerializer, UserSerializer, UserRegistrationSerializer, UserFirstNameSerializer, OrderSerializer
-from .models import Food, Order, OrderItem, Restaurant
+from .models import Food, Order, OrderItem, Restaurant, Day
 from django.contrib.auth.models import Group, User
 from django.contrib.auth import logout, get_user_model
 from rest_framework.permissions import IsAuthenticated
@@ -215,8 +215,9 @@ def get_restaurants_for_day(request, day):
             day_date = datetime.fromisoformat(day)
             # get the day of the week (1-7) from the date object
             day = day_date.isoweekday()
-            restaurants = Restaurant.objects.filter(active_days__day=day)
-            if restaurants.exists():
+            day_instance = Day.objects.get(day=day)
+            restaurants = Restaurant.objects.filter(active_days=day_instance)
+            if restaurants:
                 serializer = RestaurantSerializer(restaurants, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
