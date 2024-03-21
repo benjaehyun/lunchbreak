@@ -18,15 +18,15 @@ export default function RestaurantIndexComponent({ selectedDay }) {
     const fetchRestaurantByDay = async () => {
       if (selectedDay) {
         request(api.get, `/restaurants/day/${encodeURIComponent(selectedDay)}`);
+        console.log(apiRestaurants);
         typeof apiRestaurants === "array"
           ? setRestaurants(apiRestaurants)
           : setRestaurants([]);
+        console.log(`restaurant: ${restaurants}`);
         // setRestaurants(apiRestaurants);
       }
     };
     fetchRestaurantByDay();
-    console.log(`restaurant: ${restaurants}`);
-    console.log(apiRestaurants);
   }, [selectedDay]);
 
   // Restaurants map function
