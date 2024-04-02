@@ -203,11 +203,13 @@ class EmployeeDailyOrdersView(ListAPIView):
 def get_restaurants_for_day(request, date_str):
     if date_str:
         try:
+
             day_date = datetime.fromisoformat(date_str)
             weekday = day_date.isoweekday()
             day_instance = Day.objects.get(day=weekday)
             restaurants = Restaurant.objects.filter(active_days=day_instance)
             if restaurants.exists():
+
                 serializer = RestaurantSerializer(restaurants, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:

@@ -36,11 +36,10 @@ export default function RestaurantIndexComponent({ selectedDay }) {
           ? setRestaurants(apiRestaurants)
           : setRestaurants([]);
         setRestaurants(apiRestaurants);
+
       }
     };
     fetchRestaurantByDay();
-    console.log(`restaurant: ${restaurants}`);
-    console.log(apiRestaurants);
   }, [selectedDay]);
 
   // Restaurants map function
