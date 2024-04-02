@@ -25,7 +25,7 @@ urlpatterns = [
     # path('employee/<int:employee_id>/daily-orders/',
     #      EmployeeDailyOrdersView.as_view(), name='employee-daily-orders'),
     # Build out url for restaurants,
-    path('restaurants/day/',
+    path('restaurants/day/<str:date_str>/',
          get_restaurants_for_day, name='get_restaurants_for_day'),
 
 

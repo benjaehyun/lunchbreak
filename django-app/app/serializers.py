@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Food, Order, OrderItem, Restaurant
+from .models import Food, Order, OrderItem, Restaurant, Day
 from django.contrib.auth.models import User, Group
 
 
@@ -55,7 +55,19 @@ class UserFirstNameSerializer(serializers.ModelSerializer):
         return instance
 
 
+# class RestaurantSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Restaurant
+#         fields = '__all__'
+
+class DaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Day
+        fields = ['day', 'get_day_display']
+
 class RestaurantSerializer(serializers.ModelSerializer):
+    active_days = DaySerializer(many=True, read_only=True)
+    
     class Meta:
         model = Restaurant
         fields = '__all__'

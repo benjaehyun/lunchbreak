@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from .serializers import RestaurantSerializer, FoodSerializer, GroupSerializer, UserSerializer, UserRegistrationSerializer, UserFirstNameSerializer, OrderSerializer
-from .models import Food, Order, OrderItem, Restaurant
+from .models import Food, Order, OrderItem, Restaurant, Day
 from django.contrib.auth.models import Group, User
 from django.contrib.auth import logout, get_user_model
 from rest_framework.permissions import IsAuthenticated
@@ -17,10 +17,10 @@ from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 import logging
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from rest_framework.generics import ListAPIView
-import datetime
 
 
 logger = logging.getLogger(__name__)
@@ -196,27 +196,28 @@ class EmployeeDailyOrdersView(ListAPIView):
 
         return queryset
 
-# This is an example for the restuarant custom views
-
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_restaurants_for_day(request):
-    # Extract the date from the request
-    day = request.query_params.get('day', None)
-    # 
-    # active_days = 2024-03-12
-    # str -> pythons date 
-    # pythons date -> day of the week -> int: 1-7
-    # filter (1-7)
 
-    if day is not None:
-        # Filters restaurants by specific day
-        restaurants = Restaurant.object.filter(active_days__contains=day)
-        if restaurants.exist():
-            serializer = RestaurantSerializer(restaurants, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response({'error': 'No restaurants found for this day'}, status=status.HTTP_404_NOT_FOUND)
+def get_restaurants_for_day(request, date_str):
+    if date_str:
+        try:
+            day_date = datetime.fromisoformat(date_str)
+            weekday = day_date.isoweekday()
+            day_instance = Day.objects.get(day=weekday)
+            restaurants = Restaurant.objects.filter(active_days=day_instance)
+            if restaurants.exists():
+                serializer = RestaurantSerializer(restaurants, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response([], {'error': 'No restaurants found for this day'}, status=status.HTTP_404_NOT_FOUND)
+        except ValueError as e:
+            return Response({'error': f'Incorrect date format: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     # handling for incorrect date format
+        #     return Response({'error': 'Incorrect date format'}, status=status.HTTP_400_BAD_REQUEST)
     else:
-        return Response({'error': 'Day parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Date parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # If there's nothing to return, return an error or Empty array on frontend
